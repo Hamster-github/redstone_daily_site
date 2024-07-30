@@ -21,26 +21,24 @@ on:
 
 jobs:
 
-  # 输出目标服务器名称组成的矩阵
+  # 将数组里每个服务器信息替换成其名称的base64并输出
   # 问就是Github不给传机密，所以只能传索引
-  eval-targets-names-matricies:
+  eval-base64-names:
     runs-on: ubuntu-latest
     outputs:
       matricies: ${{ steps.eval.outputs.result }}
     steps:
-      - name: Write secret to file
-        run: mkdir ./.github && echo '${{ secrets.TARGET_SERVERS }}' > ./.github/target-servers.yml
-      - name: Eval targets names
+      - name: Eval targets base64 names
         id: eval
         uses: mikefarah/yq@master
         with:
-          cmd: |-
-            yq -o=json -I=0 eval 'map_values(map(.name))' ./.github/target-servers.yml
-          # Reference: https://mikefarah.gitbook.io/yq/usage/convert#encode-json-simple-in-one-line\
+            cmd: |-
+              echo '${{ secrets.TARGET_SERVERS }}' | yq -o=json -I=0 eval 'map_values(map(.name | @base64))'
+            # Reference: https://mikefarah.gitbook.io/yq/usage/convert#encode-json-simple-in-one-line\
 
 
   deploy:
-    needs: eval-targets-names-matricies
+    needs: eval-base64-names
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -49,7 +47,7 @@ jobs:
       type: prod
     strategy:
       matrix:
-        target-name: ${{fromJson(needs.eval-targets-names-matricies.outputs.matricies).prod}}
+        target-name: ${{fromJson(needs.eval-base64-names.outputs.matricies).prod}}
     
     steps:
       - name: Checkout code
@@ -76,15 +74,13 @@ jobs:
           name: ${{ steps.sanitize_artifact_name.outputs.sanitized_name }}-build-vue
           path: dist/vue/dist/
       
-      # 获取服务器信息
-      - name: Write targets secret to file
-        run: echo '${{ secrets.TARGET_SERVERS }}' > ./.github/target-servers.yml
+      # 获取目标服务器信息
       - name: Get target info
         id: get-target-info
         uses: mikefarah/yq@master
         with:
             cmd: |-
-              yq -o=json -I=0 eval '.${{ env.type }}.[] | select(.name == "${{ matrix.target-name }}")' ./.github/target-servers.yml
+              echo '${{ secrets.TARGET_SERVERS }}' | yq -o=json -I=0 eval '.${{ env.type }}.[] | select(.name == ("${{ matrix.target-name }}" | @base64d))'
 
       # 部署到服务器
       - name: Incremental Deploy to ${{ fromJSON(steps.get-target-info.outputs.result).name }}
