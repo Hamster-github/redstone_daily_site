@@ -75,18 +75,35 @@ jobs:
             cmd: |-
               echo '${{ secrets.TARGET_SERVERS }}' | yq -o=json -I=0 eval '.${{ env.type }}.[] | select(.name == ("${{ matrix.target-name }}" | @base64d))'
 
-      # 部署到服务器
+      # # 部署到服务器
+      # - name: Incremental Deploy to ${{ fromJSON(steps.get-target-info.outputs.result).name }}
+      #   uses: easingthemes/ssh-deploy@main
+      #   with:
+      #     SSH_PRIVATE_KEY: ::add-mask::${{ fromJSON(steps.get-target-info.outputs.result).privateKey }}
+      #     REMOTE_HOST: ${{ fromJSON(steps.get-target-info.outputs.result).host }}
+      #     REMOTE_PORT: ${{ fromJSON(steps.get-target-info.outputs.result).port }}
+      #     REMOTE_USER: ${{ fromJSON(steps.get-target-info.outputs.result).username }}
+      #     ARGS: '-avz --delete'
+      #     # https://ss64.com/bash/rsync_options.html
+      #     SOURCE: 'dist/'
+      #     TARGET: ${{ fromJSON(steps.get-target-info.outputs.result).dstPath }} # 服务器目标路径
+
+      # 将私钥写入文件
+      - name: Write private key to file
+        run: echo "${{ fromJSON(steps.get-target-info.outputs.result).privateKey }}" > ./.github/privateKey
+
+      # 直接命令行调用rsync！
       - name: Incremental Deploy to ${{ fromJSON(steps.get-target-info.outputs.result).name }}
-        uses: easingthemes/ssh-deploy@main
-        with:
-          SSH_PRIVATE_KEY: ::add-mask::${{ fromJSON(steps.get-target-info.outputs.result).privateKey }}
-          REMOTE_HOST: ${{ fromJSON(steps.get-target-info.outputs.result).host }}
-          REMOTE_PORT: ${{ fromJSON(steps.get-target-info.outputs.result).port }}
-          REMOTE_USER: ${{ fromJSON(steps.get-target-info.outputs.result).username }}
-          ARGS: '-avz --delete'
-          # https://ss64.com/bash/rsync_options.html
-          SOURCE: 'dist/'
-          TARGET: ${{ fromJSON(steps.get-target-info.outputs.result).dstPath }} # 服务器目标路径
+        run: |-
+          echo "Deploying to ${{ fromJSON(steps.get-target-info.outputs.result).name }}"
+          ::add-mask::PORT="${{ fromJSON(steps.get-target-info.outputs.result).port }}"
+          if [ -z "$PORT" ]; then
+            PORT=22
+          fi
+          ::add-mask::USER="${{ fromJSON(steps.get-target-info.outputs.result).username }}"
+          ::add-mask::HOST="${{ fromJSON(steps.get-target-info.outputs.result).host }}"
+          ::add-mask::DST_PATH="${{ fromJSON(steps.get-target-info.outputs.result).dstPath }}"
+          rsync -avz --delete -e "ssh -i ./.github/privateKey -p $PORT" dist/ $USER@$HOST:$DST_PATH
 
   upload-cdn:
     needs: deploy
