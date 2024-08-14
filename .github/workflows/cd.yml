@@ -6,8 +6,6 @@ on:
       # for ssh deploy
       SSH_DEPLOY_KEY:
         required: true
-      SSH_DEPLOY_INFO:
-        required: true
       # for Tencent Edgeone refresh API
       EO_API_SID:
         required: true
