@@ -4,9 +4,9 @@ name: CD - Refresh EO
 on:
     workflow_call:
         secrets:
-            CDN_REFRESH_API_SID:
+            EO_API_SID:
                 required: true
-            CDN_REFRESH_API_SKEY:
+            EO_API_SKEY:
                 required: true
             PI:
                 required: false
@@ -21,8 +21,8 @@ jobs:
                 shell: bash
 
         env:
-            CDN_REFRESH_API_SID: ${{ secrets.CDN_REFRESH_API_SID }}
-            CDN_REFRESH_API_SKEY: ${{ secrets.CDN_REFRESH_API_SKEY }}
+            EO_API_SID: ${{ secrets.EO_API_SID }}
+            EO_API_SKEY: ${{ secrets.EO_API_SKEY }}
             PIE: ${{ secrets.PI }}
 
         steps:
