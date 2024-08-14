@@ -99,3 +99,4 @@ jobs:
     needs: deploy
     if: ${{ github.event.inputs.environment == 'prod' }}
     uses: ./.github/workflows/cd-refresh-eo.yml
+    secrets: inherit
