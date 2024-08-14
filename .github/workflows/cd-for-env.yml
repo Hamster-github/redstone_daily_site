@@ -14,8 +14,6 @@ on:
     secrets:
       SSH_DEPLOY_KEY:
         required: true
-      SSH_DEPLOY_INFO:
-        required: true
       EO_API_SID:
         required: true
       EO_API_SKEY:
