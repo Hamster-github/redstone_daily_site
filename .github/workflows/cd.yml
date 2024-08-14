@@ -28,14 +28,14 @@ on:
 jobs:
   
   cd-dev:
-    uses: ./.github/workflows/cd-dev.yml
+    uses: ./.github/workflows/cd-for-env.yml
     if: github.ref == 'refs/heads/develop' || github.ref == 'refs/heads/workflow-dev'
     with:
         environment: dev
     secrets: inherit
 
   cd-prod:
-    uses: ./.github/workflows/cd-prod.yml
+    uses: ./.github/workflows/cd-for-env.yml
     if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/workflow-dev'
     with:
         environment: prod
