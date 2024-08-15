@@ -53,11 +53,11 @@ jobs:
             - id: sanitize_artifact_name
               uses: ./.github/actions/sanitize-name
               with:
-                name: ${{ github.ref_name }}
+                name: ${{ github.ref_name }}-${{ github.run_id }}
                   
             - name: 'Upload Build Artifacts - ${{ github.ref_name }} - Vue'
               if: steps.sanitize_artifact_name.outputs.sanitized_name
-              uses: actions/upload-artifact@v3
+              uses: actions/upload-artifact@v4
               with:
                 name: ${{ steps.sanitize_artifact_name.outputs.sanitized_name }}-build-vue
                 path: ${{ inputs.dir }}/dist

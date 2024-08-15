@@ -34,7 +34,7 @@ jobs:
 
   cd-prod:
     uses: ./.github/workflows/cd-for-env.yml
-    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/workflow-dev'
+    if: github.ref == 'refs/heads/main'
     with:
         environment: prod
     secrets: inherit

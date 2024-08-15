@@ -43,10 +43,10 @@ jobs:
       - id: sanitize_artifact_name
         uses: ./.github/actions/sanitize-name
         with:
-          name: ${{ github.ref_name }}
+          name: ${{ github.ref_name }}-${{ github.run_id }}
 
       # 解析SSH连接信息 --- username@host:port
-      - id: strip-ssh-connection-info
+      - name: Parse SSH Deploy Info
         env: 
           INFO: ${{ secrets.SSH_DEPLOY_INFO }}
         run: |
@@ -102,6 +102,6 @@ jobs:
   # 刷新eo（条件：environment == 'prod'）
   refresh-eo:
     needs: deploy
-    if: ${{ github.event.inputs.environment == 'prod' }}
+    if: ${{ inputs.environment == 'prod' }}
     uses: ./.github/workflows/cd-refresh-eo.yml
     secrets: inherit
