@@ -1,7 +1,7 @@
 # The workflow to execute the CD process for a existing Github Environment specified by the job input parameter.
 # The workflow accesses the secrets in the Environments to get the information for the deployment.
 
-name: CD for Environment
+name: CD - SSH Deploy for Environment
 
 on:
   workflow_call:

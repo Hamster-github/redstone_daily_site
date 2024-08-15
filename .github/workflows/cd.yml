@@ -26,14 +26,14 @@ on:
 jobs:
   
   cd-dev:
-    uses: ./.github/workflows/cd-for-env.yml
+    uses: ./.github/workflows/cd-ssh-deploy.yml
     if: github.ref == 'refs/heads/develop' || github.ref == 'refs/heads/workflow-dev'
     with:
         environment: dev
     secrets: inherit
 
   cd-prod:
-    uses: ./.github/workflows/cd-for-env.yml
+    uses: ./.github/workflows/cd-ssh-deploy.yml
     if: github.ref == 'refs/heads/main'
     with:
         environment: prod
