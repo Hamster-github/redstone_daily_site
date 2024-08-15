@@ -6,8 +6,8 @@ name: CD for Environment
 on:
   workflow_call:
     inputs:
-      env:
-        description: "The name of the environment to deploy to"
+      environment:
+        description: "The name of the Github Environment to deploy to"
         type: string
         required: true
         default: dev
@@ -32,10 +32,11 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    environment: dev
-    # environment: ${{ inputs.env }}
+    environment: ${{ inputs.environment }}
 
     steps:
+      - run: echo "Deploying to ${{ inputs.environment }}"
+
       - name: Checkout
         uses: actions/checkout@master
         with:
