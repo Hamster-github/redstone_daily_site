@@ -15,7 +15,7 @@ on:
       SSH_DEPLOY_KEY:
         required: true
       SSH_DEPLOY_INFO:
-        required: true
+        required: false
       EO_API_SID:
         required: true
       EO_API_SKEY:
@@ -32,8 +32,8 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    environment: 
-        name: ${{ github.event.inputs.environment }}
+    environment: dev
+    # environment: ${{ github.event.inputs.environment }}
 
     steps:
       - name: Checkout
