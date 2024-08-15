@@ -6,8 +6,6 @@ on:
       # for ssh deploy
       SSH_DEPLOY_KEY:
         required: true
-      SSH_DEPLOY_INFO:
-        required: false
       # for Tencent Edgeone refresh API
       EO_API_SID:
         required: true
@@ -34,9 +32,9 @@ jobs:
         environment: dev
     secrets: inherit
 
-#   cd-prod:
-#     uses: ./.github/workflows/cd-for-env.yml
-#     if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/workflow-dev'
-#     with:
-#         environment: prod
-#     secrets: inherit
+  cd-prod:
+    uses: ./.github/workflows/cd-for-env.yml
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/workflow-dev'
+    with:
+        environment: prod
+    secrets: inherit

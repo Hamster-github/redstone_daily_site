@@ -30,12 +30,12 @@ jobs:
             - name: Print Texts
               run: cat < .github/cyber_budhha.txt && cat < .github/RD_text.txt
 
-    # # 构建flutter项目
-    # build-flutter:
-    #     needs: spellcasting
-    #     uses: ./.github/workflows/ci-build-flutter.yml
-    #     with:
-    #         dir: ./flutter_project
+    # 构建flutter项目
+    build-flutter:
+        needs: spellcasting
+        uses: ./.github/workflows/ci-build-flutter.yml
+        with:
+            dir: ./flutter_project
 
     # 构建vue项目
     build-vue:
